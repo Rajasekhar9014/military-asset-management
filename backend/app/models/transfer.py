@@ -17,8 +17,8 @@ class Transfer(Base):
     asset_id = Column(Integer, ForeignKey("assets.id"), nullable=False, index=True)
     
     # Transfer details
-    from_unit_id = Column(Integer, ForeignKey("units.id"), nullable=True, index=True)
-    to_unit_id = Column(Integer, ForeignKey("units.id"), nullable=True, index=True)
+    from_unit_id = Column(Integer, nullable=True, index=True)  # Foreign key to units table (not yet implemented)
+    to_unit_id = Column(Integer, nullable=True, index=True)  # Foreign key to units table (not yet implemented)
     quantity = Column(Integer, nullable=False)
     transfer_date = Column(Date, nullable=False, index=True)
     

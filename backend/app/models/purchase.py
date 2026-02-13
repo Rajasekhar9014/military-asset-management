@@ -15,7 +15,7 @@ class Purchase(Base):
     
     id = Column(Integer, primary_key=True, index=True)
     asset_id = Column(Integer, ForeignKey("assets.id"), nullable=False, index=True)
-    unit_id = Column(Integer, ForeignKey("units.id"), nullable=True, index=True)
+    unit_id = Column(Integer, nullable=True, index=True)  # Foreign key to units table (not yet implemented)
     category_id = Column(Integer, ForeignKey("asset_categories.id"), nullable=False, index=True)
     
     # Purchase details
