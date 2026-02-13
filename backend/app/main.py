@@ -8,6 +8,9 @@ sys.path.append(str(Path(__file__).resolve().parents[1]))
 
 from app.config import settings
 from app.api import auth, users, asset_categories, purchases, transfers, dashboard
+from app.db.session import engine, SessionLocal, Base
+from app.models.user import User
+from app.utils.security import hash_password
 
 # Create FastAPI application
 app = FastAPI(
@@ -25,6 +28,38 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Startup event to initialize database
+@app.on_event("startup")
+async def startup_event():
+    """Initialize database on startup"""
+    try:
+        # Create all tables
+        Base.metadata.create_all(bind=engine)
+        print("✓ Database tables created/verified")
+        
+        # Create admin user if it doesn't exist
+        db = SessionLocal()
+        try:
+            existing_admin = db.query(User).filter(User.username == "admin").first()
+            if not existing_admin:
+                admin_user = User(
+                    username="admin",
+                    email="admin@military.gov",
+                    full_name="System Administrator",
+                    hashed_password=hash_password("Admin123!"),
+                    role="admin",
+                    is_active=True
+                )
+                db.add(admin_user)
+                db.commit()
+                print("✓ Admin user created (username: admin, password: Admin123!)")
+            else:
+                print("✓ Admin user already exists")
+        finally:
+            db.close()
+    except Exception as e:
+        print(f"⚠ Database initialization error: {e}")
 
 # Include routers
 app.include_router(auth.router)
