@@ -33,33 +33,51 @@ app.add_middleware(
 @app.on_event("startup")
 async def startup_event():
     """Initialize database on startup"""
-    try:
-        # Create all tables
-        Base.metadata.create_all(bind=engine)
-        print("✓ Database tables created/verified")
-        
-        # Create admin user if it doesn't exist
-        db = SessionLocal()
+    import time
+    max_retries = 3
+    retry_delay = 2
+    
+    for attempt in range(max_retries):
         try:
-            existing_admin = db.query(User).filter(User.username == "admin").first()
-            if not existing_admin:
-                admin_user = User(
-                    username="admin",
-                    email="admin@military.gov",
-                    full_name="System Administrator",
-                    hashed_password=hash_password("Admin123!"),
-                    role="admin",
-                    is_active=True
-                )
-                db.add(admin_user)
-                db.commit()
-                print("✓ Admin user created (username: admin, password: Admin123!)")
+            print(f"Attempting database initialization (attempt {attempt + 1}/{max_retries})...")
+            
+            # Create all tables
+            Base.metadata.create_all(bind=engine)
+            print("✓ Database tables created/verified")
+            
+            # Create admin user if it doesn't exist
+            db = SessionLocal()
+            try:
+                existing_admin = db.query(User).filter(User.username == "admin").first()
+                if not existing_admin:
+                    admin_user = User(
+                        username="admin",
+                        email="admin@military.gov",
+                        full_name="System Administrator",
+                        hashed_password=hash_password("Admin123!"),
+                        role="admin",
+                        is_active=True
+                    )
+                    db.add(admin_user)
+                    db.commit()
+                    print("✓ Admin user created (username: admin, password: Admin123!)")
+                else:
+                    print("✓ Admin user already exists")
+            finally:
+                db.close()
+            
+            print("✓ Database initialization complete!")
+            break  # Success, exit retry loop
+            
+        except Exception as e:
+            print(f"⚠ Database initialization attempt {attempt + 1} failed: {e}")
+            if attempt < max_retries - 1:
+                print(f"Retrying in {retry_delay} seconds...")
+                time.sleep(retry_delay)
             else:
-                print("✓ Admin user already exists")
-        finally:
-            db.close()
-    except Exception as e:
-        print(f"⚠ Database initialization error: {e}")
+                print("⚠ Database initialization failed after all retries. App will start but database may not be initialized.")
+                print("⚠ Please check database connection settings and restart the service.")
+
 
 # Include routers
 app.include_router(auth.router)
