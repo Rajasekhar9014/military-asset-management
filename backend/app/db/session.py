@@ -10,8 +10,11 @@ sys.path.append(str(Path(__file__).resolve().parents[2]))
 from app.config import settings
 
 # Create database engine
+# Replace postgresql:// with postgresql+psycopg:// to use psycopg v3 instead of psycopg2
+database_url = settings.DATABASE_URL.replace("postgresql://", "postgresql+psycopg://")
+
 engine = create_engine(
-    settings.DATABASE_URL,
+    database_url,
     pool_pre_ping=True,  # Verify connections before using
     pool_size=10,        # Connection pool size
     max_overflow=20,     # Max connections beyond pool_size
