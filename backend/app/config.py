@@ -7,11 +7,11 @@ class Settings(BaseSettings):
     
     # Database
     DATABASE_URL: str
-    DATABASE_USER: str
-    DATABASE_PASSWORD: str
-    DATABASE_HOST: str
-    DATABASE_PORT: int
-    DATABASE_NAME: str
+    DATABASE_USER: str = ""
+    DATABASE_PASSWORD: str = ""
+    DATABASE_HOST: str = "localhost"
+    DATABASE_PORT: int = 5432
+    DATABASE_NAME: str = "military_assets"
     
     # JWT
     SECRET_KEY: str
@@ -28,7 +28,7 @@ class Settings(BaseSettings):
     # CORS
     ALLOWED_ORIGINS: str = "http://localhost:3000"
     
-    # Redis
+    # Redis (Optional)
     REDIS_URL: str = "redis://localhost:6379/0"
     
     class Config:
