@@ -118,3 +118,46 @@ async def health_check():
         "database": "connected",
         "version": settings.APP_VERSION
     }
+
+@app.get("/init-db")
+async def initialize_database():
+    """Manual database initialization endpoint - call this once to create tables and admin user"""
+    try:
+        # Create all tables
+        Base.metadata.create_all(bind=engine)
+        
+        # Create admin user if it doesn't exist
+        db = SessionLocal()
+        try:
+            existing_admin = db.query(User).filter(User.username == "admin").first()
+            if not existing_admin:
+                admin_user = User(
+                    username="admin",
+                    email="admin@military.gov",
+                    full_name="System Administrator",
+                    hashed_password=hash_password("Admin123!"),
+                    role="admin",
+                    is_active=True
+                )
+                db.add(admin_user)
+                db.commit()
+                return {
+                    "status": "success",
+                    "message": "Database initialized successfully",
+                    "admin_created": True,
+                    "credentials": {"username": "admin", "password": "Admin123!"}
+                }
+            else:
+                return {
+                    "status": "success",
+                    "message": "Database already initialized",
+                    "admin_created": False
+                }
+        finally:
+            db.close()
+    except Exception as e:
+        return {
+            "status": "error",
+            "message": f"Database initialization failed: {str(e)}"
+        }
+
