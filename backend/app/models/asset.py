@@ -17,7 +17,7 @@ class Asset(Base):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String(200), nullable=False, index=True)
     category_id = Column(Integer, ForeignKey("asset_categories.id"), nullable=False, index=True)
-    unit_id = Column(Integer, ForeignKey("units.id"), nullable=False, index=True)
+    unit_id = Column(Integer, ForeignKey("units.id"), nullable=True, index=True)
     
     # Asset details
     serial_number = Column(String(100), unique=True, nullable=True, index=True)

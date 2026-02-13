@@ -15,7 +15,7 @@ class Assignment(Base):
     
     id = Column(Integer, primary_key=True, index=True)
     asset_id = Column(Integer, ForeignKey("assets.id"), nullable=False, index=True)
-    unit_id = Column(Integer, ForeignKey("units.id"), nullable=False, index=True)
+    unit_id = Column(Integer, ForeignKey("units.id"), nullable=True, index=True)
     
     # Assignment details
     assigned_to = Column(String(200), nullable=False)  # Personnel name/ID
@@ -46,7 +46,7 @@ class Expenditure(Base):
     
     id = Column(Integer, primary_key=True, index=True)
     asset_id = Column(Integer, ForeignKey("assets.id"), nullable=False, index=True)
-    unit_id = Column(Integer, ForeignKey("units.id"), nullable=False, index=True)
+    unit_id = Column(Integer, ForeignKey("units.id"), nullable=True, index=True)
     
     # Expenditure details
     quantity = Column(Integer, nullable=False)
