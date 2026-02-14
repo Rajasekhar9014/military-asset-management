@@ -33,6 +33,8 @@ app.add_middleware(
 @app.on_event("startup")
 async def startup_event():
     """Initialize database on startup"""
+    print("🚀 Starting Military Asset Management System v1.0.1 - Password Fix Applied")
+    print("🔒 Security module: Password truncation fix applied")
     import time
     max_retries = 3
     retry_delay = 2
