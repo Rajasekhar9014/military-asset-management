@@ -9,14 +9,13 @@ from pathlib import Path
 sys.path.append(str(Path(__file__).resolve().parents[2]))
 from app.config import settings
 
-# Password hashing context
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+# Password hashing context - using pbkdf2_sha256 for better compatibility
+pwd_context = CryptContext(schemes=["pbkdf2_sha256"], deprecated="auto")
 
 
 def hash_password(password: str) -> str:
     """
-    Hash a password using bcrypt.
-    Bcrypt has a 72-byte limit, so we truncate if necessary.
+    Hash a password.
     
     Args:
         password: Plain text password
@@ -24,10 +23,7 @@ def hash_password(password: str) -> str:
     Returns:
         Hashed password
     """
-    # Truncate password to 72 bytes to comply with bcrypt limit
-    password_bytes = password.encode('utf-8')[:72]
-    password_truncated = password_bytes.decode('utf-8', errors='ignore')
-    return pwd_context.hash(password_truncated)
+    return pwd_context.hash(password)
 
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
