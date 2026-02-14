@@ -33,7 +33,7 @@ app.add_middleware(
 @app.on_event("startup")
 async def startup_event():
     """Initialize database on startup"""
-    print("🚀 Starting Military Asset Management System v1.0.1 - Password Fix Applied")
+    print("🚀 Starting Military Asset Management System v1.0.2 - Model Fix Applied")
     print("🔒 Security module: Password truncation fix applied")
     import time
     max_retries = 3
@@ -137,8 +137,8 @@ async def initialize_database():
                     username="admin",
                     email="admin@military.gov",
                     full_name="System Administrator",
-                    hashed_password=hash_password("Admin123!"),
-                    role="admin",
+                    password_hash=hash_password("Admin123!"),
+                    role_id=1,  # 1 = Admin
                     is_active=True
                 )
                 db.add(admin_user)
