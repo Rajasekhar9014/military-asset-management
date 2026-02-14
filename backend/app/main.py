@@ -56,8 +56,8 @@ async def startup_event():
                         username="admin",
                         email="admin@military.gov",
                         full_name="System Administrator",
-                        hashed_password=hash_password("Admin123!"),
-                        role="admin",
+                        password_hash=hash_password("Admin123!"),
+                        role_id=1,  # 1 = Admin
                         is_active=True
                     )
                     db.add(admin_user)
